@@ -10,19 +10,16 @@ port = 13571
 
 s.connect((ip, port))
 print("socket connected to %s" % (port))
-connection_name = "ruveyda".ljust(32)[:32]
+connection_name = "ruveyda1".ljust(32)[:32]
 topic_name = "ruveyda_topic".ljust(32)[:32]
+byte_arrayb = bytearray(1024)
 
+s.sendall(connection_name.encode('utf-8'))
+s.sendall(topic_name.encode('utf-8'))
+s.sendall(byte_arrayb)
 while True:
     user_input = input("Enter text: ")
     byte_array = bytearray(user_input.encode('utf-8'))
-
-    length = len(byte_array)
-    packed_value = struct.pack("!I", length)
-    s.sendall(connection_name.encode('utf-8'))
-    s.sendall(topic_name.encode('utf-8'))
-    s.sendall(packed_value)
-
     s.sendall(byte_array)
 
     time.sleep(5)
