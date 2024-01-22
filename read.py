@@ -7,16 +7,25 @@ ip = "34.234.82.161"
 port = 13571
 s.connect((ip, port))
 
-connection_name = "ruveyda2".ljust(32)[:32]
-topic_name = "ruveyda_topic".ljust(32)[:32]
-byte_array = bytearray(1024)
+connection_name = "ruveyda2".encode('utf-8')
+if len(connection_name) < 32:
+    padding_size = 32 - len(connection_name)
+    padding = b'\x00' * padding_size
+    connection_name += padding
+topic_name = "test_topic".encode('utf-8')
+if len(topic_name) < 32:
+    padding_size = 32 - len(topic_name)
+    padding = b'\x00' * padding_size
+    topic_name += padding
+a = 1024
+size = struct.pack('!I', a)
 
-s.sendall(connection_name.encode('utf-8'))
-s.sendall(topic_name.encode('utf-8'))
-s.sendall(byte_array)
+s.sendall(connection_name)
+s.sendall(topic_name)
+s.sendall(size)
 
 while True:
     data = s.recv(1024)
-    print("Received:", data.decode('utf-8'))
+    data = data.strip(b'\x00')
+    print(data.decode('utf-8'))
 
-s.close()
